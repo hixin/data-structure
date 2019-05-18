@@ -20,6 +20,8 @@ public class MinHeap<E extends Comparable<E>> {
         data = new Array<>(capacity);
     }
 
+
+    //heapify  算法复杂度位O(n)
     public MinHeap(E[] arr) {
         data = new Array<>(arr);
         for (int i = parent(arr.length -1); i >=0; i--) {
@@ -27,7 +29,6 @@ public class MinHeap<E extends Comparable<E>> {
         }
 
     }
-
 
     // 返回堆中的元素个数
     public int size(){
@@ -62,7 +63,51 @@ public class MinHeap<E extends Comparable<E>> {
         siftUp(data.getSize() - 1);
     }
 
-    private void siftUp(int k) {
-
+    private void siftUp(int k) {//希望上浮元素的索引
+        while(k > 0 && data.get(parent(k)).compareTo(data.get(k)) > 0) {
+            data.swap(k, parent(k));
+            k = parent(k);
+        }
     }
+
+    public E findMin() {
+        if (data.getSize() == 0) {
+            throw new IllegalArgumentException("can not findMin when heap is empty");
+        }
+        return data.get(0);
+    }
+
+    public E extractMin() {
+        E ret =  findMin();
+
+        data.swap(0, data.getSize() -1);
+        data.removeLast();
+        siftDown(0);
+        return ret;
+    }
+
+    private void siftDown(int k) {
+        while(leftChild(k) < data.getSize()) {
+            int j = leftChild(k);
+            if (j + 1 < data.getSize() && data.get(j + 1).compareTo(data.get(j)) < 0 ) {
+                j = rightChild(k);
+            } // 此j中存放的是左右孩子中的最小值
+
+            if (data.get(k).compareTo(data.get(j)) <= 0) { //
+                break;
+            }
+
+            data.swap(k, j);
+            k = j;
+        }
+    }
+
+    //取出堆中的最大元素, 并且替换成元素e
+    public E replace(E e) {
+        E ret = findMin();
+        data.set(0, e);
+        siftDown(0);
+        return ret;
+    }
+
 }
